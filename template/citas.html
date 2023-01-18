@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="es">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi"
+            crossorigin="anonymous"
+        />
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.1/font/bootstrap-icons.css"
+        />
+
+        <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+        <!-- jQuery -->
+        <script
+            src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"
+        ></script>
+
+        <!-- XDSoft DateTimePicker -->
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css"
+            integrity="sha256-DOS9W6NR+NFe1fUhEE0PGKY/fubbUCnOfTje2JMDw3Y="
+            crossorigin="anonymous"
+        />
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"
+            integrity="sha256-FEqEelWI3WouFOo2VWP/uJfs1y8KJ++FLh2Lbqc8SJk="
+            crossorigin="anonymous"
+        ></script>
+
+        <title>Citas</title>
+    </head>
+    <body>
+        <div class="navbar d-flex justify-content-end px-5">
+            <div class="">
+                <a href="/logout" class="btn btn-dark col-md-12" type="submit">
+                    Cerrar sesion
+                </a>
+            </div>
+        </div>
+        <div class="wrapper">
+            <!-- Sidebar -->
+            <nav aria-label id="sidebar">
+                <br />
+
+                <ul class="list-unstyled">
+                    <li>
+                        <a href="{% url 'inicio' %}"
+                            ><i class="bi bi-house-fill"></i>Inicio</a
+                        >
+                    </li>
+                    <li>
+                        <a href="{% url 'citas' %}"
+                            ><i class="bi bi-calendar3"></i>Citas</a
+                        >
+                    </li>
+                    {% if request.user.is_superuser %}
+                    <li>
+                        <a href="{% url 'pacientes' %}"
+                            ><i class="bi bi-person"></i>Pacientes</a
+                        >
+                    </li>
+                    <li>
+                        <a href="{% url 'medicos' %}"
+                            ><i class="bi bi-universal-access-circle"></i>
+                            Médicos</a
+                        >
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            <!-- Page Content -->
+            <div id="content">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="contenido">
+                                <h1>Citas</h1>
+
+                                <div
+                                    style="
+                                        margin-top: 50px;
+                                        margin-bottom: 20px;
+                                        padding: 50px;
+                                        border: 1px solid lightgray;
+                                        border-radius: 10px;
+                                    "
+                                >
+                                    <form
+                                        method="POST"
+                                        enctype="multipart/form-data"
+                                    >
+                                        {% csrf_token %} {{form.as_p}}
+                                        <input
+                                            type="submit"
+                                            class="btn btn-info"
+                                            value="ENVIAR"
+                                        />
+                                    </form>
+                                </div>
+                                <div class="container">
+                                    {%if citas %}
+                                    <table class="table">
+                                        <thead>
+                                            <th>Asunto</th>
+                                            <th>Paciente</th>
+                                            <th>Medico</th>
+                                            <th>Fecha</th>
+                                        </thead>
+                                        <tbody>
+                                            {% for cita in citas %}
+                                            <tr>
+                                                <td>{{ cita.Asunto }}</td>
+                                                <td>
+                                                    {{ cita.Paciente.nombre}}
+                                                </td>
+                                                <td>
+                                                    {{ cita.Medico.nombre }}
+                                                </td>
+                                                <td>{{ cita.fecha }}</td>
+                                                <td>
+                                                    <a
+                                                        href="/eliminarcitas/{{ cita.id }}"
+                                                        class="btn btn-danger btn-sm"
+                                                        ><i
+                                                            class="bi bi-trash"
+                                                        ></i>
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <a
+                                                        href="/citas/{{ cita.id }}"
+                                                        class="btn btn-success btn-sm"
+                                                        ><i
+                                                            class="bi bi-pencil"
+                                                        ></i
+                                                    ></a>
+                                                </td>
+                                            </tr>
+                                            {%endfor%}
+                                        </tbody>
+                                    </table>
+                                    {% else %}
+                                    <div class="alert alert-info">
+                                        No existen Citas en la base de datos
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- JavaScript Bundle with Popper -->
+
+        <script>
+            jQuery.datetimepicker.setLocale("es");
+
+            $(function () {
+                $("#datetimepicker").datetimepicker({
+                    format: "Y-m-d H:i",
+                    inline: false,
+                    lang: "es",
+                });
+            });
+        </script>
+
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
+            crossorigin="anonymous"
+        ></script>
+    </body>
+</html>
